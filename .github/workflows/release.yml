@@ -1,0 +1,57 @@
+name: Weekly Basilisk Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday
+  workflow_dispatch:
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Scraper Dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Get Latest Builds
+        id: meta
+        run: python get_basilisk.py
+
+      - name: Check if Version Already Released
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.meta.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version ${{ steps.meta.outputs.version }} already exists. Skipping."
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download Files
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          curl -L -o "${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}"
+          curl -L -o "${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}"
+
+      - name: Create Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.meta.outputs.version }}
+          files: |
+            ${{ steps.meta.outputs.win32_file }}
+            ${{ steps.meta.outputs.win64_file }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
