@@ -28,7 +28,7 @@ def get_latest():
         for target in targets:
             if filename.startswith(target) and filename.endswith("-xpmod.7z") and target not in latest:
                 latest[target] = {
-                    "filename": f"${target}.7z",
+                    "filename": f"{target}.7z",
                     "url": BASE_URL + filename,
                     "version": version
                 }
