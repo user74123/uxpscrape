@@ -42,8 +42,10 @@ jobs:
       - name: Download Files
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          curl -L --create-dirs -o "${{ steps.meta.outputs.win32_prefix }}/${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}"
-          curl -L --create-dirs -o "${{ steps.meta.outputs.win64_prefix }}/${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}"
+          curl -L -o "${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}"
+          curl -L -o "${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}"
+          zip "${{ steps.meta.outputs.win32_prefix }}.zip" "${{ steps.meta.outputs.win32_file }}"
+          zip "${{ steps.meta.outputs.win64_prefix }}.zip" "${{ steps.meta.outputs.win64_file }}"
 
       - name: Create Release
         if: steps.check_tag.outputs.exists == 'false'
@@ -51,9 +53,9 @@ jobs:
         with:
           tag_name: ${{ steps.meta.outputs.version }}
           body: |
-            Basilisk builds mirror
+            Mirror of Basilisk Builds
           files: |
-            ${{ steps.meta.outputs.win32_prefix }}
-            ${{ steps.meta.outputs.win64_prefix }}
+            "${{ steps.meta.outputs.win32_prefix }}.zip"
+            "${{ steps.meta.outputs.win64_prefix }}.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
