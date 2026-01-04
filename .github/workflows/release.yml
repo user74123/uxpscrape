@@ -55,7 +55,7 @@ jobs:
           body: |
             Mirror of Basilisk Builds
           files: |
-            "${{ steps.meta.outputs.win32_prefix }}.zip"
-            "${{ steps.meta.outputs.win64_prefix }}.zip"
+            ${{ steps.meta.outputs.win32_prefix }}.zip
+            ${{ steps.meta.outputs.win64_prefix }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
