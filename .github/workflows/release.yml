@@ -42,8 +42,8 @@ jobs:
       - name: Download Files
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          curl -L -o "${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}"
-          curl -L -o "${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}"
+          curl -L --create-dirs -o "${{ steps.meta.outputs.win32_prefix }}/${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}"
+          curl -L --create-dirs -o "${{ steps.meta.outputs.win64_prefix }}/${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}"
 
       - name: Create Release
         if: steps.check_tag.outputs.exists == 'false'
@@ -53,7 +53,7 @@ jobs:
           body: |
             Automated update for Basilisk
           files: |
-            ${{ steps.meta.outputs.win32_file }}
-            ${{ steps.meta.outputs.win64_file }}
+            ${{ steps.meta.outputs.win32_prefix }}
+            ${{ steps.meta.outputs.win64_prefix }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

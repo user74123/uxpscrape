@@ -13,7 +13,7 @@ def get_latest():
     rows = soup.find('div', class_='list').find('table').find('tbody').find_all('tr')
 
     latest = {}
-    targets = ["basilisk52-g4.8.win32", "basilisk52-g4.8.win64"]
+    target = "basilisk52-"
 
     for row in rows:
         name_cell = row.find('td', class_='n')
@@ -23,15 +23,19 @@ def get_latest():
 
         link = name_cell.find('a')
         filename = link.text.strip()
-        version = filename.split('-')[3]
 
-        for target in targets:
-            if filename.startswith(target) and filename.endswith("-xpmod.7z") and target not in latest:
-                latest[target] = {
-                    "filename": f"{target}.7z",
-                    "url": BASE_URL + filename,
-                    "version": version
-                }
+        if filename.startswith(target) and filename.endswith("-xpmod.7z") and target not in latest:
+            filename_attr = filename.split('-')
+            wintarget = filename_attr[1].split('.')[-1]
+            prefix = target + wintarget
+            version = filename_attr[3]
+
+            latest[wintarget] = {
+                "prefix": prefix
+                "filename": filename,
+                "url": BASE_URL + filename,
+                "version": version
+            }
 
         if len(latest) == len(targets):
             break
@@ -46,8 +50,10 @@ if __name__ == "__main__":
 
     if 'GITHUB_OUTPUT' in os.environ:
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-            f.write(f"version={meta["basilisk52-g4.8.win32"]["version"]}\n")
-            f.write(f"win32_file={meta["basilisk52-g4.8.win32"]["filename"]}\n")
-            f.write(f"win32_url={meta["basilisk52-g4.8.win32"]["url"]}\n")
-            f.write(f"win64_file={meta["basilisk52-g4.8.win64"]["filename"]}\n")
-            f.write(f"win64_url={meta["basilisk52-g4.8.win64"]["url"]}\n")
+            f.write(f"version={meta["win32"]["version"]}\n")
+            f.write(f"win32_prefix={meta["win32"]["prefix"]}\n")
+            f.write(f"win32_file={meta["win32"]["filename"]}\n")
+            f.write(f"win32_url={meta["win32"]["url"]}\n")
+            f.write(f"win64_prefix={meta["win64"]["prefix"]}\n")
+            f.write(f"win64_file={meta["win64"]["filename"]}\n")
+            f.write(f"win64_url={meta["win64"]["url"]}\n")
