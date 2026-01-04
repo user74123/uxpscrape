@@ -51,7 +51,7 @@ jobs:
         with:
           tag_name: ${{ steps.meta.outputs.version }}
           body: |
-            Automated update for Basilisk
+            Basilisk builds mirror
           files: |
             ${{ steps.meta.outputs.win32_prefix }}
             ${{ steps.meta.outputs.win64_prefix }}
