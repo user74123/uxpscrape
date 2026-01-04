@@ -37,7 +37,7 @@ def get_latest():
                 "version": version
             }
 
-        if len(latest) == len(targets):
+        if len(latest) >= 2:
             break
 
     return latest
