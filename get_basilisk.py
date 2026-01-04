@@ -31,7 +31,7 @@ def get_latest():
             version = filename_attr[3]
 
             latest[wintarget] = {
-                "prefix": prefix
+                "prefix": prefix,
                 "filename": filename,
                 "url": BASE_URL + filename,
                 "version": version
