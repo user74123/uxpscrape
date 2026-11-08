@@ -50,6 +50,7 @@ if __name__ == "__main__":
 
     if 'GITHUB_OUTPUT' in os.environ:
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+            f.write(f"base_url={BASE_URL}\n")
             f.write(f"version={meta["win32"]["version"]}\n")
             f.write(f"win32_prefix={meta["win32"]["prefix"]}\n")
             f.write(f"win32_file={meta["win32"]["filename"]}\n")
