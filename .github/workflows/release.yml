@@ -42,8 +42,14 @@ jobs:
       - name: Download Files
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          curl -L -o "${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}" -H "Referer: ${{ steps.meta.outputs.base_url }}"
-          curl -L -o "${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}" -H "Referer: ${{ steps.meta.outputs.base_url }}"
+          STATUS=$(curl -sL -w "%{http_code}" -o "${{ steps.meta.outputs.win32_file }}" "${{ steps.meta.outputs.win32_url }}" -H "Referer: ${{ steps.meta.outputs.base_url }}")
+          if [ "$STATUS" -ne 200 ]; then
+            exit 1
+          fi
+          STATUS=$(curl -sL -w "%{http_code}" -o "${{ steps.meta.outputs.win64_file }}" "${{ steps.meta.outputs.win64_url }}" -H "Referer: ${{ steps.meta.outputs.base_url }}")
+          if [ "$STATUS" -ne 200 ]; then
+            exit 1
+          fi
           zip "${{ steps.meta.outputs.win32_prefix }}.zip" "${{ steps.meta.outputs.win32_file }}"
           zip "${{ steps.meta.outputs.win64_prefix }}.zip" "${{ steps.meta.outputs.win64_file }}"
 
